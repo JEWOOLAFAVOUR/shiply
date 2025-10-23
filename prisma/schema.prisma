@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model - migrated from MongoDB
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  avatar    Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations for PaaS platform
+  projects  Project[]
+  deployments Deployment[]
+
+  @@map("users")
+}
+
+// Project model - for deployed applications
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  repoUrl     String?
+  framework   String   // "react", "node", "next", etc.
+  status      ProjectStatus @default(INACTIVE)
+  
+  // User relation
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Environment variables
+  envVars     EnvVar[]
+  
+  // Deployments
+  deployments Deployment[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("projects")
+}
+
+// Deployment model - tracks deployment history
+model Deployment {
+  id          String   @id @default(cuid())
+  version     String
+  status      DeploymentStatus @default(PENDING)
+  buildLogs   String?
+  deployUrl   String?
+  
+  // Relations
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("deployments")
+}
+
+// Environment Variables model
+model EnvVar {
+  id        String   @id @default(cuid())
+  key       String
+  value     String
+  
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, key])
+  @@map("env_vars")
+}
+
+// Enums
+enum ProjectStatus {
+  ACTIVE
+  INACTIVE
+  BUILDING
+  ERROR
+}
+
+enum DeploymentStatus {
+  PENDING
+  BUILDING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
