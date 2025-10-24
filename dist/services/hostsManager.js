@@ -29,7 +29,7 @@ class HostsManager {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // Check if we already have Shiply entries
-                const hostsContent = yield fs_extra_1.default.readFile(this.hostsFile, 'utf8');
+                const hostsContent = yield fs_extra_1.default.readFile(this.hostsFile, "utf8");
                 if (hostsContent.includes(this.shiplyMarker)) {
                     console.log("✅ Shiply domains already configured in hosts file");
                     return;
@@ -61,9 +61,9 @@ ${this.shiplyMarker}
     removeShiplyDomains() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const hostsContent = yield fs_extra_1.default.readFile(this.hostsFile, 'utf8');
+                const hostsContent = yield fs_extra_1.default.readFile(this.hostsFile, "utf8");
                 // Remove Shiply section
-                const lines = hostsContent.split('\n');
+                const lines = hostsContent.split("\n");
                 const filteredLines = [];
                 let skipShiplySection = false;
                 for (const line of lines) {
@@ -71,7 +71,7 @@ ${this.shiplyMarker}
                         skipShiplySection = true;
                         continue;
                     }
-                    if (skipShiplySection && line.trim() === '') {
+                    if (skipShiplySection && line.trim() === "") {
                         skipShiplySection = false;
                         continue;
                     }
@@ -79,7 +79,7 @@ ${this.shiplyMarker}
                         filteredLines.push(line);
                     }
                 }
-                yield fs_extra_1.default.writeFile(this.hostsFile, filteredLines.join('\n'));
+                yield fs_extra_1.default.writeFile(this.hostsFile, filteredLines.join("\n"));
                 console.log("🗑️ Removed Shiply domains from hosts file");
             }
             catch (error) {

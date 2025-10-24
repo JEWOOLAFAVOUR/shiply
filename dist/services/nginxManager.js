@@ -114,7 +114,7 @@ server {
                 yield execAsync("docker-compose up -d nginx-proxy");
                 console.log("🚀 Started Nginx reverse proxy");
                 // Wait a moment for startup
-                yield new Promise(resolve => setTimeout(resolve, 2000));
+                yield new Promise((resolve) => setTimeout(resolve, 2000));
             }
             catch (error) {
                 console.error("❌ Failed to start Nginx proxy:", error);
@@ -142,9 +142,9 @@ server {
     generateAppUrl(projectName) {
         const subdomain = projectName
             .toLowerCase()
-            .replace(/[^a-z0-9-]/g, '-')
-            .replace(/-+/g, '-')
-            .replace(/^-|-$/g, '');
+            .replace(/[^a-z0-9-]/g, "-")
+            .replace(/-+/g, "-")
+            .replace(/^-|-$/g, "");
         return `http://${subdomain}.shiply.local`;
     }
 }

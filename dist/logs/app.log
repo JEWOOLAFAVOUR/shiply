@@ -20,3 +20,5 @@ GET /health 200 1.185 ms
 GET /favicon.ico 404 0.945 ms
 GET /api/v1/projects 401 1.449 ms
 GET /api/v1/projects 200 232.089 ms
+POST /api/v1/projects/ 201 124.947 ms
+POST /api/v1/cmh5765iv000155ponho684ri/deploy 201 101.508 ms

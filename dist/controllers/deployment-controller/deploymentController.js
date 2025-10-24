@@ -17,7 +17,7 @@ const project_1 = require("../../models/project/project");
 const helper_1 = require("../../utils/helper");
 const dockerBuildService_1 = require("../../services/dockerBuildService");
 const containerManager_1 = require("../../services/containerManager");
-const nginxManager_1 = require("../../services/nginxManager");
+const nginxConfigManager_1 = require("../../services/nginxConfigManager");
 const fs_extra_1 = __importDefault(require("fs-extra"));
 const path_1 = __importDefault(require("path"));
 const multer_1 = __importDefault(require("multer"));
@@ -46,7 +46,7 @@ const upload = (0, multer_1.default)({
 // Initialize services
 const dockerBuilder = new dockerBuildService_1.DockerBuildService();
 const containerManager = new containerManager_1.ContainerManager();
-const nginxManager = new nginxManager_1.NginxManager();
+const nginxConfigManager = new nginxConfigManager_1.NginxConfigManager();
 // Deploy a project
 const deployProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -223,17 +223,20 @@ function processDeployment(deploymentId, uploadPath, project, deployment) {
             const containerInfo = yield containerManager.deployContainer(containerConfig);
             // Get assigned host port
             const hostPort = ((_b = containerInfo.ports.find((p) => p.Type === "tcp")) === null || _b === void 0 ? void 0 : _b.PublicPort) || 0;
-            // Generate custom domain URL
-            const customUrl = nginxManager.generateAppUrl(project.name);
-            console.log("Generated custom URL:", customUrl);
-            // Configure Nginx reverse proxy
-            const subdomain = project.name
-                .toLowerCase()
-                .replace(/[^a-z0-9-]/g, '-')
-                .replace(/-+/g, '-')
-                .replace(/^-|-$/g, '');
-            yield nginxManager.addAppRoute(subdomain, hostPort);
-            console.log(`✅ Configured reverse proxy: ${customUrl} → localhost:${hostPort}`);
+            // Configure Nginx reverse proxy for custom domain
+            const subdomain = sanitizedProjectName; // Already sanitized above
+            const customUrl = `http://${subdomain}.shiply.local`;
+            console.log(`🌐 Setting up reverse proxy: ${customUrl} → localhost:${hostPort}`);
+            // Add nginx route for the deployed app
+            yield nginxConfigManager.addAppRoute({
+                appName: sanitizedProjectName,
+                subdomain: subdomain,
+                port: hostPort,
+                containerName: containerName
+            });
+            // Notify user about host entry
+            yield nginxConfigManager.addHostEntry(subdomain);
+            console.log(`✅ App deployed and accessible at: ${customUrl}`);
             // Update deployment with container info
             yield deployment_1.Deployment.update(deploymentId, {
                 containerName: containerName,
@@ -442,6 +445,7 @@ const startDeployment = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 // Delete deployment
 const deleteDeployment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const { deploymentId } = req.params;
         const userId = req.userId;
@@ -462,6 +466,16 @@ const deleteDeployment = (req, res) => __awaiter(void 0, void 0, void 0, functio
         // Remove Docker image if exists
         if (deployment.dockerImageId) {
             yield dockerBuilder.removeImage(deployment.dockerImageId);
+        }
+        // Remove nginx route if exists
+        if ((_a = deployment.project) === null || _a === void 0 ? void 0 : _a.name) {
+            const sanitizedProjectName = deployment.project.name
+                .toLowerCase()
+                .replace(/[^a-z0-9-_.]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+            yield nginxConfigManager.removeAppRoute(sanitizedProjectName);
+            console.log(`🗑️ Removed nginx route for: ${sanitizedProjectName}`);
         }
         // Delete deployment record
         yield deployment_1.Deployment.delete(deploymentId);

@@ -6,6 +6,7 @@ import { CustomRequest } from "../../utils/types";
 import { DockerBuildService } from "../../services/dockerBuildService";
 import { ContainerManager } from "../../services/containerManager";
 import { NginxManager } from "../../services/nginxManager";
+import { NginxConfigManager } from "../../services/nginxConfigManager";
 import fs from "fs-extra";
 import path from "path";
 import multer from "multer";
@@ -39,7 +40,7 @@ const upload = multer({
 // Initialize services
 const dockerBuilder = new DockerBuildService();
 const containerManager = new ContainerManager();
-const nginxManager = new NginxManager();
+const nginxConfigManager = new NginxConfigManager();
 
 // Deploy a project
 const deployProject = async (
@@ -263,21 +264,26 @@ async function processDeployment(
     const hostPort =
       containerInfo.ports.find((p) => p.Type === "tcp")?.PublicPort || 0;
 
-    // Generate custom domain URL
-    const customUrl = nginxManager.generateAppUrl(project.name);
-    console.log("Generated custom URL:", customUrl);
+    // Configure Nginx reverse proxy for custom domain
+    const subdomain = sanitizedProjectName; // Already sanitized above
+    const customUrl = `http://${subdomain}.shiply.local`;
 
-    // Configure Nginx reverse proxy
-    const subdomain = project.name
-      .toLowerCase()
-      .replace(/[^a-z0-9-]/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "");
-
-    await nginxManager.addAppRoute(subdomain, hostPort);
     console.log(
-      `✅ Configured reverse proxy: ${customUrl} → localhost:${hostPort}`
+      `🌐 Setting up reverse proxy: ${customUrl} → localhost:${hostPort}`
     );
+
+    // Add nginx route for the deployed app
+    await nginxConfigManager.addAppRoute({
+      appName: sanitizedProjectName,
+      subdomain: subdomain,
+      port: hostPort,
+      containerName: containerName,
+    });
+
+    // Notify user about host entry
+    await nginxConfigManager.addHostEntry(subdomain);
+
+    console.log(`✅ App deployed and accessible at: ${customUrl}`);
 
     // Update deployment with container info
     await Deployment.update(deploymentId, {
@@ -597,6 +603,18 @@ const deleteDeployment = async (
     // Remove Docker image if exists
     if (deployment.dockerImageId) {
       await dockerBuilder.removeImage(deployment.dockerImageId);
+    }
+
+    // Remove nginx route if exists
+    if (deployment.project?.name) {
+      const sanitizedProjectName = deployment.project.name
+        .toLowerCase()
+        .replace(/[^a-z0-9-_.]/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+
+      await nginxConfigManager.removeAppRoute(sanitizedProjectName);
+      console.log(`🗑️ Removed nginx route for: ${sanitizedProjectName}`);
     }
 
     // Delete deployment record
