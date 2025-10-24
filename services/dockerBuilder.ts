@@ -120,7 +120,7 @@ export class DockerfileGenerator {
         startCommand: scripts.start || "node index.js",
         port: port,
         buildDir: "",
-        installCommand: "npm ci --only=production",
+        installCommand: "npm install --only=production", // Use npm install instead of npm ci
         packageManager: "npm",
       };
     }
@@ -132,7 +132,7 @@ export class DockerfileGenerator {
       startCommand: "serve -s . -l 3000",
       port: 3000,
       buildDir: "",
-      installCommand: "npm install -g serve",
+      installCommand: "npm install && npm install -g serve", // More flexible install
       packageManager: "npm",
     };
   }
@@ -282,10 +282,10 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \\
   CMD curl -f http://localhost:${config.port}/health || exit 1
 
 # Start the application
-CMD ${config.startCommand
+CMD [${config.startCommand
       .split(" ")
       .map((cmd) => `"${cmd}"`)
-      .join(", ")}
+      .join(", ")}]
 `;
   }
 

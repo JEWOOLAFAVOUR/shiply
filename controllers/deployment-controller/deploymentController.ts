@@ -241,9 +241,9 @@ async function processDeployment(
     }
 
     // Deploy container
-    const containerName = `${project.name.toLowerCase()}-${project.userId}-${
-      deployment.version
-    }`;
+    const containerName = `${sanitizedProjectName}-${project.userId}-${deployment.version}`;
+    console.log("Container name:", containerName);
+    
     const containerConfig = {
       imageId: buildResult.imageId!,
       imageName: buildResult.imageName,
