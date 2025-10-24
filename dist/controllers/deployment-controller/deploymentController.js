@@ -17,6 +17,7 @@ const project_1 = require("../../models/project/project");
 const helper_1 = require("../../utils/helper");
 const dockerBuildService_1 = require("../../services/dockerBuildService");
 const containerManager_1 = require("../../services/containerManager");
+const nginxManager_1 = require("../../services/nginxManager");
 const fs_extra_1 = __importDefault(require("fs-extra"));
 const path_1 = __importDefault(require("path"));
 const multer_1 = __importDefault(require("multer"));
@@ -45,6 +46,7 @@ const upload = (0, multer_1.default)({
 // Initialize services
 const dockerBuilder = new dockerBuildService_1.DockerBuildService();
 const containerManager = new containerManager_1.ContainerManager();
+const nginxManager = new nginxManager_1.NginxManager();
 // Deploy a project
 const deployProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -221,14 +223,24 @@ function processDeployment(deploymentId, uploadPath, project, deployment) {
             const containerInfo = yield containerManager.deployContainer(containerConfig);
             // Get assigned host port
             const hostPort = ((_b = containerInfo.ports.find((p) => p.Type === "tcp")) === null || _b === void 0 ? void 0 : _b.PublicPort) || 0;
-            const deployUrl = `http://localhost:${hostPort}`;
+            // Generate custom domain URL
+            const customUrl = nginxManager.generateAppUrl(project.name);
+            console.log("Generated custom URL:", customUrl);
+            // Configure Nginx reverse proxy
+            const subdomain = project.name
+                .toLowerCase()
+                .replace(/[^a-z0-9-]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+            yield nginxManager.addAppRoute(subdomain, hostPort);
+            console.log(`✅ Configured reverse proxy: ${customUrl} → localhost:${hostPort}`);
             // Update deployment with container info
             yield deployment_1.Deployment.update(deploymentId, {
                 containerName: containerName,
                 containerPort: containerConfig.port,
                 hostPort: hostPort,
                 containerStatus: containerInfo.state,
-                deployUrl: deployUrl,
+                deployUrl: customUrl, // Use custom domain instead of localhost
                 status: "SUCCESS",
             });
             // Update project status

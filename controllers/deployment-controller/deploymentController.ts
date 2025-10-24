@@ -5,6 +5,7 @@ import { sendError } from "../../utils/helper";
 import { CustomRequest } from "../../utils/types";
 import { DockerBuildService } from "../../services/dockerBuildService";
 import { ContainerManager } from "../../services/containerManager";
+import { NginxManager } from "../../services/nginxManager";
 import fs from "fs-extra";
 import path from "path";
 import multer from "multer";
@@ -38,6 +39,7 @@ const upload = multer({
 // Initialize services
 const dockerBuilder = new DockerBuildService();
 const containerManager = new ContainerManager();
+const nginxManager = new NginxManager();
 
 // Deploy a project
 const deployProject = async (
@@ -243,7 +245,7 @@ async function processDeployment(
     // Deploy container
     const containerName = `${sanitizedProjectName}-${project.userId}-${deployment.version}`;
     console.log("Container name:", containerName);
-    
+
     const containerConfig = {
       imageId: buildResult.imageId!,
       imageName: buildResult.imageName,
@@ -260,7 +262,22 @@ async function processDeployment(
     // Get assigned host port
     const hostPort =
       containerInfo.ports.find((p) => p.Type === "tcp")?.PublicPort || 0;
-    const deployUrl = `http://localhost:${hostPort}`;
+
+    // Generate custom domain URL
+    const customUrl = nginxManager.generateAppUrl(project.name);
+    console.log("Generated custom URL:", customUrl);
+
+    // Configure Nginx reverse proxy
+    const subdomain = project.name
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    await nginxManager.addAppRoute(subdomain, hostPort);
+    console.log(
+      `✅ Configured reverse proxy: ${customUrl} → localhost:${hostPort}`
+    );
 
     // Update deployment with container info
     await Deployment.update(deploymentId, {
@@ -268,7 +285,7 @@ async function processDeployment(
       containerPort: containerConfig.port,
       hostPort: hostPort,
       containerStatus: containerInfo.state,
-      deployUrl: deployUrl,
+      deployUrl: customUrl, // Use custom domain instead of localhost
       status: "SUCCESS",
     });
 
