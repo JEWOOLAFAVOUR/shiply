@@ -5,7 +5,10 @@ import { sendError } from "../../utils/helper";
 import { CustomRequest } from "../../utils/types";
 
 // Create a new project
-const createProject = async (req: CustomRequest, res: Response): Promise<void> => {
+const createProject = async (
+  req: CustomRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { name, description, repoUrl, framework, envVars } = req.body;
     const userId = req.userId;
@@ -19,9 +22,23 @@ const createProject = async (req: CustomRequest, res: Response): Promise<void> =
     }
 
     // Validate framework
-    const validFrameworks = ["react", "vue", "angular", "node", "express", "next", "nuxt", "svelte", "static"];
+    const validFrameworks = [
+      "react",
+      "vue",
+      "angular",
+      "node",
+      "express",
+      "next",
+      "nuxt",
+      "svelte",
+      "static",
+    ];
     if (!validFrameworks.includes(framework.toLowerCase())) {
-      return sendError(res, 400, `Invalid framework. Supported: ${validFrameworks.join(", ")}`);
+      return sendError(
+        res,
+        400,
+        `Invalid framework. Supported: ${validFrameworks.join(", ")}`
+      );
     }
 
     // Create the project
@@ -54,7 +71,10 @@ const createProject = async (req: CustomRequest, res: Response): Promise<void> =
 };
 
 // Get all projects for the authenticated user
-const getUserProjects = async (req: CustomRequest, res: Response): Promise<void> => {
+const getUserProjects = async (
+  req: CustomRequest,
+  res: Response
+): Promise<void> => {
   try {
     const userId = req.userId;
 
@@ -76,7 +96,10 @@ const getUserProjects = async (req: CustomRequest, res: Response): Promise<void>
 };
 
 // Get a specific project by ID
-const getProjectById = async (req: CustomRequest, res: Response): Promise<void> => {
+const getProjectById = async (
+  req: CustomRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { projectId } = req.params;
     const userId = req.userId;
@@ -108,7 +131,10 @@ const getProjectById = async (req: CustomRequest, res: Response): Promise<void> 
 };
 
 // Update a project
-const updateProject = async (req: CustomRequest, res: Response): Promise<void> => {
+const updateProject = async (
+  req: CustomRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { projectId } = req.params;
     const { name, description, repoUrl, framework } = req.body;
@@ -130,9 +156,23 @@ const updateProject = async (req: CustomRequest, res: Response): Promise<void> =
 
     // Validate framework if provided
     if (framework) {
-      const validFrameworks = ["react", "vue", "angular", "node", "express", "next", "nuxt", "svelte", "static"];
+      const validFrameworks = [
+        "react",
+        "vue",
+        "angular",
+        "node",
+        "express",
+        "next",
+        "nuxt",
+        "svelte",
+        "static",
+      ];
       if (!validFrameworks.includes(framework.toLowerCase())) {
-        return sendError(res, 400, `Invalid framework. Supported: ${validFrameworks.join(", ")}`);
+        return sendError(
+          res,
+          400,
+          `Invalid framework. Supported: ${validFrameworks.join(", ")}`
+        );
       }
     }
 
@@ -157,7 +197,10 @@ const updateProject = async (req: CustomRequest, res: Response): Promise<void> =
 };
 
 // Delete a project
-const deleteProject = async (req: CustomRequest, res: Response): Promise<void> => {
+const deleteProject = async (
+  req: CustomRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { projectId } = req.params;
     const userId = req.userId;
@@ -195,7 +238,10 @@ const deleteProject = async (req: CustomRequest, res: Response): Promise<void> =
 };
 
 // Update project status (for deployment processes)
-const updateProjectStatus = async (req: CustomRequest, res: Response): Promise<void> => {
+const updateProjectStatus = async (
+  req: CustomRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { projectId } = req.params;
     const { status } = req.body;
@@ -211,7 +257,11 @@ const updateProjectStatus = async (req: CustomRequest, res: Response): Promise<v
 
     const validStatuses = ["ACTIVE", "INACTIVE", "BUILDING", "ERROR"];
     if (!validStatuses.includes(status)) {
-      return sendError(res, 400, `Invalid status. Valid statuses: ${validStatuses.join(", ")}`);
+      return sendError(
+        res,
+        400,
+        `Invalid status. Valid statuses: ${validStatuses.join(", ")}`
+      );
     }
 
     // Check if project exists and user owns it
@@ -238,7 +288,10 @@ const updateProjectStatus = async (req: CustomRequest, res: Response): Promise<v
 };
 
 // Get all projects (admin only - for future use)
-const getAllProjects = async (req: CustomRequest, res: Response): Promise<void> => {
+const getAllProjects = async (
+  req: CustomRequest,
+  res: Response
+): Promise<void> => {
   try {
     // In a real app, you'd check for admin permissions here
     const projects = await Project.findAll();

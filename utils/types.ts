@@ -33,6 +33,19 @@ export interface IDeployment {
   status: "PENDING" | "BUILDING" | "SUCCESS" | "FAILED" | "CANCELLED";
   buildLogs?: string | null;
   deployUrl?: string | null;
+
+  // Docker-specific fields
+  dockerImageId?: string | null;
+  dockerImageName?: string | null;
+  containerName?: string | null;
+  containerPort?: number | null;
+  hostPort?: number | null;
+  containerStatus?: string | null;
+
+  // Deployment configuration
+  memoryLimit?: number | null;
+  cpuLimit?: number | null;
+
   projectId: string;
   userId: string;
   createdAt: Date;

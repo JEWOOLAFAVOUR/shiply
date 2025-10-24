@@ -14,63 +14,64 @@ export const generateAccessToken = (
   });
 };
 
-// export const verifyToken = (
-//   req: CustomRequest,
-//   res: Response,
-//   next: NextFunction
-// ): void => {
-//   const authHeader = req.headers.authorization;
+export const verifyToken = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): void => {
+  const authHeader = req.headers.authorization;
 
-//   if (!authHeader) {
-//     return sendError(res, 401, "You are not authenticated");
-//   }
+  if (!authHeader) {
+    return sendError(res, 401, "You are not authenticated");
+  }
 
-//   const token = authHeader.split(" ")[1];
+  const token = authHeader.split(" ")[1];
 
-//   try {
-//     const decoded = jwt.verify(
-//       token,
-//       process.env.JWT_SECRET as string
-//     ) as JwtPayload;
-//     req.user = decoded; // Attach decoded user details to request
-//     next();
-//   } catch (err) {
-//     return sendError(res, 403, "Invalid token");
-//   }
-// };
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as JwtPayload;
+    req.user = decoded; // Attach decoded user details to request
+    req.userId = decoded.id; // Add userId for easier access
+    next();
+  } catch (err) {
+    return sendError(res, 403, "Invalid token");
+  }
+};
 
-// export const verifyTokenAndAuthorization = async (
-//   req: CustomRequest,
-//   res: Response,
-//   next: NextFunction
-// ): Promise<void> => {
-//   const authHeader = req.headers.authorization;
+export const verifyTokenAndAuthorization = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const authHeader = req.headers.authorization;
 
-//   if (!authHeader) {
-//     return sendError(res, 403, "User not authorized");
-//   }
+  if (!authHeader) {
+    return sendError(res, 403, "User not authorized");
+  }
 
-//   const token = authHeader.split(" ")[1];
+  const token = authHeader.split(" ")[1];
 
-//   try {
-//     const decoded = (await promisify(jwt.verify)(
-//       token,
-//       process.env.JWT_SECRET as string
-//     )) as JwtPayload;
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as JwtPayload;
 
-//     req.userId = decoded.id;
+    req.userId = decoded.id;
 
-//     const user = await User.findById(decoded.id);
-//     if (!user) {
-//       return sendError(res, 404, "User does not exist");
-//     }
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return sendError(res, 404, "User does not exist");
+    }
 
-//     req.user = user;
-//     next();
-//   } catch (err: any) {
-//     res.status(500).json({
-//       status: "error",
-//       message: err.message,
-//     });
-//   }
-// };
+    req.user = user;
+    next();
+  } catch (err: any) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
+};

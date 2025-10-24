@@ -60,6 +60,18 @@ model Deployment {
   buildLogs   String?
   deployUrl   String?
   
+  // Docker-specific fields
+  dockerImageId   String?  // Docker image ID
+  dockerImageName String?  // Docker image name with tag
+  containerName   String?  // Container name
+  containerPort   Int?     // Container port
+  hostPort        Int?     // Host port assigned by Docker
+  containerStatus String?  // running, stopped, error
+  
+  // Deployment configuration
+  memoryLimit     Int?     // Memory limit in MB
+  cpuLimit        Int?     // CPU limit shares
+  
   // Relations
   projectId   String
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)

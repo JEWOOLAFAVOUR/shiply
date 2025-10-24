@@ -11,6 +11,8 @@ import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import authRouter from "./routers/auth-route/userRoute";
+import projectRouter from "./routers/project-route/projectRoute";
+import deploymentRouter from "./routers/deployment-route/deploymentRoute";
 import "./db"; // This will initialize the database connection
 
 const expressSanitizer = require("express-sanitizer");
@@ -204,6 +206,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 // api request
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/projects", projectRouter);
+app.use("/api/v1", deploymentRouter);
 
 // Handle 404 routes
 app.use((req: Request, res: Response) => {
