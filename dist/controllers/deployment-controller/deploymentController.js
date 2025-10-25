@@ -232,7 +232,7 @@ function processDeployment(deploymentId, uploadPath, project, deployment) {
                 appName: sanitizedProjectName,
                 subdomain: subdomain,
                 port: hostPort,
-                containerName: containerName
+                containerName: containerName,
             });
             // Notify user about host entry
             yield nginxConfigManager.addHostEntry(subdomain);
@@ -471,9 +471,9 @@ const deleteDeployment = (req, res) => __awaiter(void 0, void 0, void 0, functio
         if ((_a = deployment.project) === null || _a === void 0 ? void 0 : _a.name) {
             const sanitizedProjectName = deployment.project.name
                 .toLowerCase()
-                .replace(/[^a-z0-9-_.]/g, '-')
-                .replace(/-+/g, '-')
-                .replace(/^-|-$/g, '');
+                .replace(/[^a-z0-9-_.]/g, "-")
+                .replace(/-+/g, "-")
+                .replace(/^-|-$/g, "");
             yield nginxConfigManager.removeAppRoute(sanitizedProjectName);
             console.log(`🗑️ Removed nginx route for: ${sanitizedProjectName}`);
         }

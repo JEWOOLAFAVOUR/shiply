@@ -165,8 +165,8 @@ server {
                     // If reload fails, restart the container with new config
                     yield execAsync("docker stop shiply-nginx");
                     yield execAsync("docker rm shiply-nginx");
-                    const fullConfigPath = path_1.default.join(process.cwd(), "nginx", "full.conf");
-                    yield execAsync(`docker run -d --name shiply-nginx -p 80:80 --add-host=host.docker.internal:host-gateway -v "${fullConfigPath}:/etc/nginx/conf.d/default.conf:ro" nginx:alpine`);
+                    const sitesPath = path_1.default.join(process.cwd(), "nginx", "sites");
+                    yield execAsync(`docker run -d --name shiply-nginx -p 80:80 --add-host=host.docker.internal:host-gateway -v "${sitesPath}:/etc/nginx/conf.d:ro" nginx:alpine`);
                     console.log("✅ Nginx container restarted with new configuration");
                 }
                 catch (restartError) {
@@ -214,7 +214,7 @@ server {
                                     appName,
                                     subdomain: serverNameMatch[1],
                                     port: parseInt(proxyPassMatch[1]),
-                                    containerName: containerMatch ? containerMatch[1] : ""
+                                    containerName: containerMatch ? containerMatch[1] : "",
                                 });
                             }
                         }

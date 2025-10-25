@@ -187,9 +187,9 @@ server {
         await execAsync("docker stop shiply-nginx");
         await execAsync("docker rm shiply-nginx");
 
-        const fullConfigPath = path.join(process.cwd(), "nginx", "full.conf");
+        const sitesPath = path.join(process.cwd(), "nginx", "sites");
         await execAsync(
-          `docker run -d --name shiply-nginx -p 80:80 --add-host=host.docker.internal:host-gateway -v "${fullConfigPath}:/etc/nginx/conf.d/default.conf:ro" nginx:alpine`
+          `docker run -d --name shiply-nginx -p 80:80 --add-host=host.docker.internal:host-gateway -v "${sitesPath}:/etc/nginx/conf.d:ro" nginx:alpine`
         );
 
         console.log("✅ Nginx container restarted with new configuration");
