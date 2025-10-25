@@ -63,23 +63,30 @@ export interface IEnvVar {
 }
 
 // API Response Types
-export interface ErrorResponse {
+export interface BaseResponse {
   success: boolean;
-  error: boolean;
   message: string;
 }
 
-export interface SuccessResponse<T = any> {
-  success: boolean;
-  error: boolean;
-  message: string;
+export interface ErrorResponse extends BaseResponse {
+  success: false;
+  error: true;
+}
+
+export interface SuccessResponse<T = any> extends BaseResponse {
+  success: true;
+  error: false;
   data?: T;
 }
 
-// Custom Request Types
-export interface CustomRequest extends Express.Request {
-  user?: JwtPayload | null;
-  userId?: string;
+// Express Request augmentation
+declare global {
+  namespace Express {
+    interface Request {
+      user?: JwtPayload & { id: string };
+      userId?: string;
+    }
+  }
 }
 
 // Prisma Types Export (for direct use)

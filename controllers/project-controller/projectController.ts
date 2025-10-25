@@ -2,11 +2,10 @@ import { Request, Response } from "express";
 import { Project } from "../../models/project/project";
 import { EnvVar } from "../../models/envVar/envVar";
 import { sendError } from "../../utils/helper";
-import { CustomRequest } from "../../utils/types";
 
 // Create a new project
 const createProject = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -72,7 +71,7 @@ const createProject = async (
 
 // Get all projects for the authenticated user
 const getUserProjects = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -97,7 +96,7 @@ const getUserProjects = async (
 
 // Get a specific project by ID
 const getProjectById = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -132,7 +131,7 @@ const getProjectById = async (
 
 // Update a project
 const updateProject = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -198,7 +197,7 @@ const updateProject = async (
 
 // Delete a project
 const deleteProject = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -239,7 +238,7 @@ const deleteProject = async (
 
 // Update project status (for deployment processes)
 const updateProjectStatus = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -289,7 +288,7 @@ const updateProjectStatus = async (
 
 // Get all projects (admin only - for future use)
 const getAllProjects = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {

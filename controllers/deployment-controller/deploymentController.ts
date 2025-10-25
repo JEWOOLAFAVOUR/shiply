@@ -1,8 +1,8 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { Deployment } from "../../models/deployment/deployment";
 import { Project } from "../../models/project/project";
 import { sendError } from "../../utils/helper";
-import { CustomRequest } from "../../utils/types";
+// import { CustomRequest } from "../../utils/types";
 import { DockerBuildService } from "../../services/dockerBuildService";
 import { ContainerManager } from "../../services/containerManager";
 import { NginxManager } from "../../services/nginxManager";
@@ -43,10 +43,7 @@ const containerManager = new ContainerManager();
 const nginxConfigManager = new NginxConfigManager();
 
 // Deploy a project
-const deployProject = async (
-  req: CustomRequest,
-  res: Response
-): Promise<void> => {
+const deployProject = async (req: Request, res: Response): Promise<void> => {
   try {
     const { projectId } = req.params;
     const { version, memoryLimit, cpuLimit } = req.body;
@@ -319,10 +316,7 @@ async function processDeployment(
 }
 
 // Get deployment details
-const getDeployment = async (
-  req: CustomRequest,
-  res: Response
-): Promise<void> => {
+const getDeployment = async (req: Request, res: Response): Promise<void> => {
   try {
     const { deploymentId } = req.params;
     const userId = req.userId;
@@ -357,7 +351,7 @@ const getDeployment = async (
 
 // Get deployments for a project
 const getProjectDeployments = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -393,7 +387,7 @@ const getProjectDeployments = async (
 
 // Get deployment logs
 const getDeploymentLogs = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -448,10 +442,7 @@ const getDeploymentLogs = async (
 };
 
 // Stop deployment (stop container)
-const stopDeployment = async (
-  req: CustomRequest,
-  res: Response
-): Promise<void> => {
+const stopDeployment = async (req: Request, res: Response): Promise<void> => {
   try {
     const { deploymentId } = req.params;
     const userId = req.userId;
@@ -509,10 +500,7 @@ const stopDeployment = async (
 };
 
 // Start deployment (start container)
-const startDeployment = async (
-  req: CustomRequest,
-  res: Response
-): Promise<void> => {
+const startDeployment = async (req: Request, res: Response): Promise<void> => {
   try {
     const { deploymentId } = req.params;
     const userId = req.userId;
@@ -571,7 +559,7 @@ const startDeployment = async (
 
 // Delete deployment
 const deleteDeployment = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {

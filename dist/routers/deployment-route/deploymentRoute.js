@@ -3,12 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
+const express_1 = __importDefault(require("express"));
 const deploymentController_1 = __importDefault(require("../../controllers/deployment-controller/deploymentController"));
 const verifyToken_1 = require("../../middlewares/verifyToken");
 const express_validator_1 = require("express-validator");
 const validator_1 = require("../../middlewares/validator");
-const router = (0, express_1.Router)();
+const router = express_1.default.Router();
+const wrappedVerifyToken = verifyToken_1.verifyToken;
 /**
  * @route POST /api/v1/projects/:projectId/deploy
  * @desc Deploy a project

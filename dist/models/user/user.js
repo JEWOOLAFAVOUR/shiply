@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = exports.UserModel = void 0;
+exports.default = exports.User = exports.UserModel = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 class UserModel {
@@ -89,5 +89,6 @@ class UserModel {
     }
 }
 exports.UserModel = UserModel;
-// For backward compatibility, export as User
+// Export both the class and a compatible User object
 exports.User = UserModel;
+exports.default = exports.User;

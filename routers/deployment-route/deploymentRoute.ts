@@ -1,10 +1,12 @@
-import { Router } from "express";
+import express, { RequestHandler } from "express";
 import deploymentController from "../../controllers/deployment-controller/deploymentController";
 import { verifyToken } from "../../middlewares/verifyToken";
 import { body, param, query } from "express-validator";
 import { validate } from "../../middlewares/validator";
 
-const router = Router();
+const router = express.Router();
+
+const wrappedVerifyToken = verifyToken as express.RequestHandler;
 
 /**
  * @route POST /api/v1/projects/:projectId/deploy

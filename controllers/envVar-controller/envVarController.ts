@@ -1,12 +1,12 @@
-import { Response } from "express";
+import { Response, Request } from "express";
 import { EnvVar } from "../../models/envVar/envVar";
 import { Project } from "../../models/project/project";
 import { sendError } from "../../utils/helper";
-import { CustomRequest } from "../../utils/types";
+// import { CustomRequest } from "../../utils/types";
 
 // Get environment variables for a project
 const getProjectEnvVars = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -41,10 +41,7 @@ const getProjectEnvVars = async (
 };
 
 // Create or update environment variable
-const upsertEnvVar = async (
-  req: CustomRequest,
-  res: Response
-): Promise<void> => {
+const upsertEnvVar = async (req: Request, res: Response): Promise<void> => {
   try {
     const { projectId } = req.params;
     const { key, value } = req.body;
@@ -92,10 +89,7 @@ const upsertEnvVar = async (
 };
 
 // Delete environment variable
-const deleteEnvVar = async (
-  req: CustomRequest,
-  res: Response
-): Promise<void> => {
+const deleteEnvVar = async (req: Request, res: Response): Promise<void> => {
   try {
     const { projectId, key } = req.params;
     const userId = req.userId;
@@ -135,7 +129,7 @@ const deleteEnvVar = async (
 
 // Bulk update environment variables
 const bulkUpdateEnvVars = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {

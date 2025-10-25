@@ -3,7 +3,6 @@ import { Request, Response, NextFunction } from "express";
 import { sendError } from "../utils/helper";
 import { User } from "../models/user/user";
 import { promisify } from "util";
-import { CustomRequest } from "../utils/types";
 
 export const generateAccessToken = (
   userId: string,
@@ -15,7 +14,7 @@ export const generateAccessToken = (
 };
 
 export const verifyToken = (
-  req: CustomRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ): void => {
@@ -31,7 +30,7 @@ export const verifyToken = (
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET as string
-    ) as JwtPayload;
+    ) as JwtPayload & { id: string };
     req.user = decoded; // Attach decoded user details to request
     req.userId = decoded.id; // Add userId for easier access
     next();
@@ -41,7 +40,7 @@ export const verifyToken = (
 };
 
 export const verifyTokenAndAuthorization = async (
-  req: CustomRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {

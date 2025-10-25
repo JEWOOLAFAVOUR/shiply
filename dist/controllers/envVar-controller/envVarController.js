@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const envVar_1 = require("../../models/envVar/envVar");
 const project_1 = require("../../models/project/project");
 const helper_1 = require("../../utils/helper");
+// import { CustomRequest } from "../../utils/types";
 // Get environment variables for a project
 const getProjectEnvVars = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

@@ -75,5 +75,6 @@ export class UserModel {
   }
 }
 
-// For backward compatibility, export as User
+// Export both the class and a compatible User object
 export const User = UserModel;
+export { User as default };
