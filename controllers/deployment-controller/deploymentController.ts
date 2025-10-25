@@ -558,10 +558,7 @@ const startDeployment = async (req: Request, res: Response): Promise<void> => {
 };
 
 // Delete deployment
-const deleteDeployment = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const deleteDeployment = async (req: Request, res: Response): Promise<void> => {
   try {
     const { deploymentId } = req.params;
     const userId = req.userId;

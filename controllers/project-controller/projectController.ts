@@ -4,10 +4,7 @@ import { EnvVar } from "../../models/envVar/envVar";
 import { sendError } from "../../utils/helper";
 
 // Create a new project
-const createProject = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const createProject = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, description, repoUrl, framework, envVars } = req.body;
     const userId = req.userId;
@@ -70,10 +67,7 @@ const createProject = async (
 };
 
 // Get all projects for the authenticated user
-const getUserProjects = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const getUserProjects = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.userId;
 
@@ -95,10 +89,7 @@ const getUserProjects = async (
 };
 
 // Get a specific project by ID
-const getProjectById = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const getProjectById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { projectId } = req.params;
     const userId = req.userId;
@@ -130,10 +121,7 @@ const getProjectById = async (
 };
 
 // Update a project
-const updateProject = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const updateProject = async (req: Request, res: Response): Promise<void> => {
   try {
     const { projectId } = req.params;
     const { name, description, repoUrl, framework } = req.body;
@@ -196,10 +184,7 @@ const updateProject = async (
 };
 
 // Delete a project
-const deleteProject = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const deleteProject = async (req: Request, res: Response): Promise<void> => {
   try {
     const { projectId } = req.params;
     const userId = req.userId;
@@ -287,10 +272,7 @@ const updateProjectStatus = async (
 };
 
 // Get all projects (admin only - for future use)
-const getAllProjects = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const getAllProjects = async (req: Request, res: Response): Promise<void> => {
   try {
     // In a real app, you'd check for admin permissions here
     const projects = await Project.findAll();
