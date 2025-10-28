@@ -29,12 +29,12 @@ services:
     restart: unless-stopped
 
   shiply-api:
-    image: node:18-alpine
+    build: .
     container_name: shiply-api
-    working_dir: /app
     volumes:
-      - .:/app
-    command: npm start
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./uploads:/app/uploads
+      - ./temp:/app/temp
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://shiply:shiply@shiply-db:5432/shiply
