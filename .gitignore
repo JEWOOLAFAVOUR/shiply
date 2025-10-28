@@ -62,3 +62,4 @@ buck-out/
 
 *.env
 /generated/prisma
+*shiply_key.pem
