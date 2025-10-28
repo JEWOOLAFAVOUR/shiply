@@ -20,7 +20,7 @@ const util_1 = require("util");
 const execAsync = (0, util_1.promisify)(child_process_1.exec);
 class NginxConfigManager {
     constructor() {
-        this.configPath = path_1.default.join(process.cwd(), "nginx", "sites");
+        this.configPath = path_1.default.join(process.cwd(), "nginx", "conf.d");
         this.baseConfigPath = path_1.default.join(process.cwd(), "nginx", "default.conf");
     }
     getNginxContainerName() {
@@ -122,26 +122,8 @@ server {
     regenerateMainConfig() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // Read base configuration
-                const baseConfig = yield fs_extra_1.default.readFile(this.baseConfigPath, "utf8");
-                // Read all app configurations
-                const sitesDir = this.configPath;
-                const appConfigs = [];
-                if (yield fs_extra_1.default.pathExists(sitesDir)) {
-                    const configFiles = yield fs_extra_1.default.readdir(sitesDir);
-                    for (const file of configFiles) {
-                        if (file.endsWith(".conf")) {
-                            const configContent = yield fs_extra_1.default.readFile(path_1.default.join(sitesDir, file), "utf8");
-                            appConfigs.push(configContent);
-                        }
-                    }
-                }
-                // Combine configurations
-                const fullConfig = baseConfig + "\n\n" + appConfigs.join("\n\n");
-                // Write updated configuration
-                const outputPath = path_1.default.join(process.cwd(), "nginx", "full.conf");
-                yield fs_extra_1.default.writeFile(outputPath, fullConfig);
-                console.log(`📝 Updated nginx configuration: ${outputPath}`);
+                console.log(`📝 Nginx configs are automatically loaded from: ${this.configPath}`);
+                // No need to regenerate - nginx automatically loads all .conf files from conf.d directory
             }
             catch (error) {
                 console.error("❌ Failed to regenerate nginx config:", error.message);

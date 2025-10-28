@@ -24,7 +24,7 @@ export class NginxConfigManager {
   }
 
   constructor() {
-    this.configPath = path.join(process.cwd(), "nginx", "sites");
+    this.configPath = path.join(process.cwd(), "nginx", "conf.d");
     this.baseConfigPath = path.join(process.cwd(), "nginx", "default.conf");
   }
 
@@ -134,35 +134,8 @@ server {
    */
   private async regenerateMainConfig(): Promise<void> {
     try {
-      // Read base configuration
-      const baseConfig = await fs.readFile(this.baseConfigPath, "utf8");
-
-      // Read all app configurations
-      const sitesDir = this.configPath;
-      const appConfigs: string[] = [];
-
-      if (await fs.pathExists(sitesDir)) {
-        const configFiles = await fs.readdir(sitesDir);
-
-        for (const file of configFiles) {
-          if (file.endsWith(".conf")) {
-            const configContent = await fs.readFile(
-              path.join(sitesDir, file),
-              "utf8"
-            );
-            appConfigs.push(configContent);
-          }
-        }
-      }
-
-      // Combine configurations
-      const fullConfig = baseConfig + "\n\n" + appConfigs.join("\n\n");
-
-      // Write updated configuration
-      const outputPath = path.join(process.cwd(), "nginx", "full.conf");
-      await fs.writeFile(outputPath, fullConfig);
-
-      console.log(`📝 Updated nginx configuration: ${outputPath}`);
+      console.log(`📝 Nginx configs are automatically loaded from: ${this.configPath}`);
+      // No need to regenerate - nginx automatically loads all .conf files from conf.d directory
     } catch (error: any) {
       console.error("❌ Failed to regenerate nginx config:", error.message);
       throw error;
