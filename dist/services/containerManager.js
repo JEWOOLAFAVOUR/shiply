@@ -48,6 +48,11 @@ class ContainerManager extends events_1.EventEmitter {
                             Name: "unless-stopped",
                         },
                     },
+                    NetworkingConfig: {
+                        EndpointsConfig: {
+                            "shiply_shiply-network": {},
+                        },
+                    },
                     Env: config.envVars
                         ? Object.entries(config.envVars).map(([key, value]) => `${key}=${value}`)
                         : [],
