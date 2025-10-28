@@ -13,6 +13,21 @@ services:
     networks:
       - shiply-network
 
+  shiply-db:
+    image: postgres:13
+    container_name: shiply-db
+    environment:
+      POSTGRES_DB: shiply
+      POSTGRES_USER: shiply
+      POSTGRES_PASSWORD: shiply
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - shiply-network
+    restart: unless-stopped
+
   shiply-api:
     image: node:18-alpine
     container_name: shiply-api
@@ -22,12 +37,17 @@ services:
     command: npm start
     environment:
       - NODE_ENV=production
+      - DATABASE_URL=postgresql://shiply:shiply@shiply-db:5432/shiply
     ports:
       - "3000:3000"
     networks:
       - shiply-network
     depends_on:
+      - shiply-db
       - nginx-proxy
+
+volumes:
+  postgres_data:
 
 networks:
   shiply-network:
