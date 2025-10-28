@@ -15,6 +15,13 @@ export interface AppRoute {
 export class NginxConfigManager {
   private configPath: string;
   private baseConfigPath: string;
+  
+  /**
+   * Name of the nginx container to control. Can be overridden with env var NGINX_CONTAINER_NAME
+   */
+  private getNginxContainerName(): string {
+    return process.env.NGINX_CONTAINER_NAME || "shiply-proxy";
+  }
 
   constructor() {
     this.configPath = path.join(process.cwd(), "nginx", "sites");
@@ -172,26 +179,21 @@ server {
 
       console.log("🔄 Reloading nginx configuration...");
 
-      // Copy new config to container and reload
-      await execAsync(`docker exec shiply-nginx nginx -s reload`);
+  // Copy new config to container and reload
+  const nginxContainer = this.getNginxContainerName();
+  await execAsync(`docker exec ${nginxContainer} nginx -s reload`);
 
       console.log("✅ Nginx configuration reloaded");
     } catch (error: any) {
       console.error(
-        "⚠️ Failed to reload nginx, restarting container...",
+        "⚠️ Failed to reload nginx, attempting to restart container...",
         error.message
       );
 
       try {
-        // If reload fails, restart the container with new config
-        await execAsync("docker stop shiply-nginx");
-        await execAsync("docker rm shiply-nginx");
-
-        const sitesPath = path.join(process.cwd(), "nginx", "sites");
-        await execAsync(
-          `docker run -d --name shiply-nginx -p 80:80 --add-host=host.docker.internal:host-gateway -v "${sitesPath}:/etc/nginx/conf.d:ro" nginx:alpine`
-        );
-
+        const nginxContainer = this.getNginxContainerName();
+        // Try a safe restart of the existing container (compose-managed)
+        await execAsync(`docker restart ${nginxContainer}`);
         console.log("✅ Nginx container restarted with new configuration");
       } catch (restartError: any) {
         console.error("❌ Failed to restart nginx:", restartError.message);

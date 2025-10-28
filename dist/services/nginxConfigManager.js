@@ -23,6 +23,9 @@ class NginxConfigManager {
         this.configPath = path_1.default.join(process.cwd(), "nginx", "sites");
         this.baseConfigPath = path_1.default.join(process.cwd(), "nginx", "default.conf");
     }
+    getNginxContainerName() {
+        return process.env.NGINX_CONTAINER_NAME || "shiply-proxy";
+    }
     /**
      * Add a new app route to nginx configuration
      */
@@ -156,17 +159,16 @@ server {
                 const fullConfigPath = path_1.default.join(process.cwd(), "nginx", "full.conf");
                 console.log("🔄 Reloading nginx configuration...");
                 // Copy new config to container and reload
-                yield execAsync(`docker exec shiply-nginx nginx -s reload`);
+                const nginxContainer = this.getNginxContainerName();
+                yield execAsync(`docker exec ${nginxContainer} nginx -s reload`);
                 console.log("✅ Nginx configuration reloaded");
             }
             catch (error) {
-                console.error("⚠️ Failed to reload nginx, restarting container...", error.message);
+                console.error("⚠️ Failed to reload nginx, attempting to restart container...", error.message);
                 try {
-                    // If reload fails, restart the container with new config
-                    yield execAsync("docker stop shiply-nginx");
-                    yield execAsync("docker rm shiply-nginx");
-                    const sitesPath = path_1.default.join(process.cwd(), "nginx", "sites");
-                    yield execAsync(`docker run -d --name shiply-nginx -p 80:80 --add-host=host.docker.internal:host-gateway -v "${sitesPath}:/etc/nginx/conf.d:ro" nginx:alpine`);
+                    const nginxContainer = this.getNginxContainerName();
+                    // Try a safe restart of the existing container (compose-managed)
+                    yield execAsync(`docker restart ${nginxContainer}`);
                     console.log("✅ Nginx container restarted with new configuration");
                 }
                 catch (restartError) {
