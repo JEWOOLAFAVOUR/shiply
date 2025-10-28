@@ -1,0 +1,14 @@
+[Unit]
+Description=Shiply Nginx Auto-Sync Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/shiply/scripts/nginx-auto-sync.sh
+WorkingDirectory=/opt/shiply
+User=azureuser
+Group=azureuser
+
+[Install]
+WantedBy=multi-user.target

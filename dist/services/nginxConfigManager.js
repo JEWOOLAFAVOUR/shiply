@@ -19,12 +19,15 @@ const child_process_1 = require("child_process");
 const util_1 = require("util");
 const execAsync = (0, util_1.promisify)(child_process_1.exec);
 class NginxConfigManager {
+    /**
+     * Name of the nginx container to control. Can be overridden with env var NGINX_CONTAINER_NAME
+     */
+    getNginxContainerName() {
+        return process.env.NGINX_CONTAINER_NAME || "shiply-proxy";
+    }
     constructor() {
         this.configPath = path_1.default.join(process.cwd(), "nginx", "conf.d");
         this.baseConfigPath = path_1.default.join(process.cwd(), "nginx", "default.conf");
-    }
-    getNginxContainerName() {
-        return process.env.NGINX_CONTAINER_NAME || "shiply-proxy";
     }
     /**
      * Add a new app route to nginx configuration
@@ -137,13 +140,13 @@ server {
     reloadNginx() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // Update the docker container with new config
-                const fullConfigPath = path_1.default.join(process.cwd(), "nginx", "full.conf");
                 console.log("🔄 Reloading nginx configuration...");
-                // Copy new config to container and reload
+                // Test nginx configuration first
                 const nginxContainer = this.getNginxContainerName();
+                yield execAsync(`docker exec ${nginxContainer} nginx -t`);
+                // Reload nginx if config is valid
                 yield execAsync(`docker exec ${nginxContainer} nginx -s reload`);
-                console.log("✅ Nginx configuration reloaded");
+                console.log("✅ Nginx configuration reloaded successfully");
             }
             catch (error) {
                 console.error("⚠️ Failed to reload nginx, attempting to restart container...", error.message);

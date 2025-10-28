@@ -147,16 +147,16 @@ server {
    */
   private async reloadNginx(): Promise<void> {
     try {
-      // Update the docker container with new config
-      const fullConfigPath = path.join(process.cwd(), "nginx", "full.conf");
-
       console.log("🔄 Reloading nginx configuration...");
 
-  // Copy new config to container and reload
-  const nginxContainer = this.getNginxContainerName();
-  await execAsync(`docker exec ${nginxContainer} nginx -s reload`);
+      // Test nginx configuration first
+      const nginxContainer = this.getNginxContainerName();
+      await execAsync(`docker exec ${nginxContainer} nginx -t`);
+      
+      // Reload nginx if config is valid
+      await execAsync(`docker exec ${nginxContainer} nginx -s reload`);
 
-      console.log("✅ Nginx configuration reloaded");
+      console.log("✅ Nginx configuration reloaded successfully");
     } catch (error: any) {
       console.error(
         "⚠️ Failed to reload nginx, attempting to restart container...",
