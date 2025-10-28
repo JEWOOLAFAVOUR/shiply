@@ -35,6 +35,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./uploads:/app/uploads
       - ./temp:/app/temp
+      - ./nginx/conf.d:/app/nginx/conf.d:rw
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://shiply:shiply@shiply-db:5432/shiply
