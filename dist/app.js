@@ -107,6 +107,7 @@ const corsOptions = {
     maxAge: 86400, // 24 hours
 };
 // Middleware
+app.set("trust proxy", 1); // Trust first proxy (for rate limiting behind reverse proxy)
 app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json({ limit: "2mb" }));
 app.use(express_1.default.urlencoded({ extended: true, limit: "2mb" }));
