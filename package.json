@@ -63,7 +63,8 @@
     "socket.io": "^4.6.2",
     "tar-fs": "^3.1.1",
     "uuid": "^11.1.0",
-    "xhr2": "^0.2.1"
+    "xhr2": "^0.2.1",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "@express-rate-limit/tsconfig": "^1.0.2",
@@ -72,7 +73,6 @@
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/morgan": "^1.9.10",
-    "morgan": "^1.10.0",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.1",
     "typescript": "^5.8.2"
