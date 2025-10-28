@@ -38,6 +38,7 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://shiply:shiply@shiply-db:5432/shiply
+      - PASS_SEC=shiply-secret-key-2025-very-secure-password-encryption
     ports:
       - "3000:3000"
     networks:
