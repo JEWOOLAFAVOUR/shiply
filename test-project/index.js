@@ -8,7 +8,7 @@ app.use(express.json());
 // Routes
 app.get("/", (req, res) => {
   res.json({
-    message: "🚀 Hello from Shiply deployed app!",
+    message: "🚀 Hello from Gilgal deployed app!",
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "development",
   });
@@ -23,7 +23,8 @@ app.get("/api/test", (req, res) => {
     message: "API endpoint working!",
     data: {
       framework: "Express.js",
-      platform: "Shiply PaaS",
+      platform: "Gilgal PaaS",
+      domain: "gilgal.tech",
       version: "1.0.0",
     },
   });

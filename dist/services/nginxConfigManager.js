@@ -23,7 +23,7 @@ class NginxConfigManager {
      * Name of the nginx container to control. Can be overridden with env var NGINX_CONTAINER_NAME
      */
     getNginxContainerName() {
-        return process.env.NGINX_CONTAINER_NAME || "shiply-proxy";
+        return process.env.NGINX_CONTAINER_NAME || "gilgal-proxy";
     }
     constructor() {
         this.configPath = path_1.default.join(process.cwd(), "nginx", "conf.d");
@@ -35,7 +35,7 @@ class NginxConfigManager {
     addAppRoute(route) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(`🌐 Adding nginx route: ${route.subdomain}.shiply.local -> localhost:${route.port}`);
+                console.log(`🌐 Adding nginx route: ${route.subdomain}.gilgal.tech -> localhost:${route.port}`);
                 // Ensure sites directory exists
                 yield fs_extra_1.default.ensureDir(this.configPath);
                 // Generate app-specific nginx config
@@ -48,7 +48,7 @@ class NginxConfigManager {
                 yield this.regenerateMainConfig();
                 // Reload nginx
                 yield this.reloadNginx();
-                console.log(`🚀 App accessible at: http://${route.subdomain}.shiply.local`);
+                console.log(`🚀 App accessible at: https://${route.subdomain}.gilgal.tech`);
             }
             catch (error) {
                 console.error("❌ Failed to add nginx route:", error.message);
@@ -86,11 +86,16 @@ class NginxConfigManager {
         return `# ${route.appName} - Auto-generated configuration
 server {
     listen 80;
-    server_name ${route.subdomain}.shiply.local;
+    listen 443 ssl;
+    server_name ${route.subdomain}.gilgal.tech;
+    
+    # SSL Configuration
+    ssl_certificate /etc/nginx/ssl/gilgal.tech/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/gilgal.tech/privkey.pem;
     
     # Add custom headers for debugging
-    add_header X-Shiply-App "${route.appName}" always;
-    add_header X-Shiply-Container "${route.containerName}" always;
+    add_header X-Gilgal-App "${route.appName}" always;
+    add_header X-Gilgal-Container "${route.containerName}" always;
     
     location / {
         proxy_pass http://${route.containerName}:3000;
@@ -169,9 +174,8 @@ server {
     addHostEntry(subdomain) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(`🔗 Host entry needed: ${subdomain}.shiply.local`);
-                console.log(`📝 Add to C:\\Windows\\System32\\drivers\\etc\\hosts:`);
-                console.log(`   127.0.0.1 ${subdomain}.shiply.local`);
+                console.log(`🔗 DNS entry configured: ${subdomain}.gilgal.tech`);
+                console.log(`📝 App will be available at: https://${subdomain}.gilgal.tech`);
             }
             catch (error) {
                 console.error("❌ Failed to add host entry:", error.message);
@@ -193,9 +197,9 @@ server {
                             const appName = file.replace(".conf", "");
                             const configContent = yield fs_extra_1.default.readFile(path_1.default.join(sitesDir, file), "utf8");
                             // Parse config to extract details (simplified)
-                            const serverNameMatch = configContent.match(/server_name\s+(\S+)\.shiply\.local/);
+                            const serverNameMatch = configContent.match(/server_name\s+(\S+)\.gilgal\.tech/);
                             const proxyPassMatch = configContent.match(/proxy_pass\s+http:\/\/host\.docker\.internal:(\d+)/);
-                            const containerMatch = configContent.match(/X-Shiply-Container\s+"([^"]+)"/);
+                            const containerMatch = configContent.match(/X-Gilgal-Container\s+"([^"]+)"/);
                             if (serverNameMatch && proxyPassMatch) {
                                 routes.push({
                                     appName,

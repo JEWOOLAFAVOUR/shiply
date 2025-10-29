@@ -3,9 +3,9 @@
 # Nginx Auto-Sync Script - Permanent Solution for Automatic Nginx Configuration
 # This script automatically creates nginx configurations for new deployed containers
 
-NGINX_CONF_DIR="/opt/shiply/nginx/conf.d"
-SHIPLY_NETWORK="shiply_shiply-network"
-NGINX_CONTAINER="shiply-proxy"
+NGINX_CONF_DIR="/opt/gilgal/nginx/conf.d"
+GILGAL_NETWORK="gilgal_gilgal-network"
+NGINX_CONTAINER="gilgal-proxy"
 
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
@@ -29,11 +29,15 @@ create_nginx_config() {
 # $app_name - Auto-generated configuration
 server {
     listen 80;
-    server_name ${app_name}.shiply.local;
+    server_name ${app_name}.gilgal.tech;
+
+    # SSL Configuration
+    ssl_certificate /etc/nginx/ssl/gilgal.tech/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/gilgal.tech/privkey.pem;
 
     # Add custom headers for debugging
-    add_header X-Shiply-App "$app_name" always;
-    add_header X-Shiply-Container "$container_name" always;
+    add_header X-Gilgal-App "$app_name" always;
+    add_header X-Gilgal-Container "$container_name" always;
 
     location / {
         proxy_pass http://${container_name}:3000;
@@ -81,12 +85,12 @@ reload_nginx() {
 sync_nginx_configs() {
     local configs_created=0
     
-    # Get all containers connected to the shiply network
-    local containers=$(docker network inspect $SHIPLY_NETWORK --format '{{range .Containers}}{{.Name}} {{end}}' 2>/dev/null)
+    # Get all containers connected to the gilgal network
+    local containers=$(docker network inspect $GILGAL_NETWORK --format '{{range .Containers}}{{.Name}} {{end}}' 2>/dev/null)
     
     for container in $containers; do
         # Skip system containers
-        if [[ $container =~ ^(shiply-api|shiply-proxy|shiply-db)$ ]]; then
+        if [[ $container =~ ^(gilgal-api|gilgal-proxy|gilgal-db)$ ]]; then
             continue
         fi
         

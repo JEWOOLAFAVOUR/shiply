@@ -69,7 +69,7 @@ export class ContainerManager extends EventEmitter {
         },
         NetworkingConfig: {
           EndpointsConfig: {
-            "shiply_shiply-network": {},
+            "gilgal_gilgal-network": {},
           },
         },
         Env: config.envVars
@@ -78,8 +78,8 @@ export class ContainerManager extends EventEmitter {
             )
           : [],
         Labels: {
-          "shiply.project": "true",
-          "shiply.container-name": config.containerName,
+          "gilgal.project": "true",
+          "gilgal.container-name": config.containerName,
         },
       };
 
@@ -307,14 +307,14 @@ export class ContainerManager extends EventEmitter {
   }
 
   /**
-   * List all Shiply containers
+   * List all Gilgal containers
    */
-  async listShiplyContainers(): Promise<ContainerInfo[]> {
+  async listGilgalContainers(): Promise<ContainerInfo[]> {
     try {
       const containers = await this.docker.listContainers({
         all: true,
         filters: {
-          label: ["shiply.project=true"],
+          label: ["gilgal.project=true"],
         },
       });
 

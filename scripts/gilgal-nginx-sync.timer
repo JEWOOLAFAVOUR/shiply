@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Gilgal Nginx Auto-Sync every minute
+Requires=gilgal-nginx-sync.service
+
+[Timer]
+OnCalendar=*:*:0/30
+Persistent=true
+
+[Install]
+WantedBy=timers.target

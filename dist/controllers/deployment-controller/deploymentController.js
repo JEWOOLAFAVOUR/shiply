@@ -180,7 +180,7 @@ function processDeployment(deploymentId, uploadPath, project, deployment) {
                 .replace(/[^a-z0-9-_.]/g, "-") // Replace invalid characters with hyphens
                 .replace(/-+/g, "-") // Replace multiple consecutive hyphens with single hyphen
                 .replace(/^-|-$/g, ""); // Remove leading/trailing hyphens
-            const imageName = `shiply/${sanitizedProjectName}-${project.userId}`;
+            const imageName = `gilgal/${sanitizedProjectName}-${project.userId}`;
             console.log("Original project name:", project.name);
             console.log("Sanitized project name:", sanitizedProjectName);
             console.log("Final image name:", imageName);
@@ -226,7 +226,7 @@ function processDeployment(deploymentId, uploadPath, project, deployment) {
             const hostPort = ((_b = containerInfo.ports.find((p) => p.Type === "tcp")) === null || _b === void 0 ? void 0 : _b.PublicPort) || 0;
             // Configure Nginx reverse proxy for custom domain
             const subdomain = sanitizedProjectName; // Already sanitized above
-            const customUrl = `http://${subdomain}.shiply.local`;
+            const customUrl = `https://${subdomain}.gilgal.tech`;
             console.log(`🌐 Setting up reverse proxy: ${customUrl} → localhost:${hostPort}`);
             // Add nginx route for the deployed app
             yield nginxConfigManager.addAppRoute({

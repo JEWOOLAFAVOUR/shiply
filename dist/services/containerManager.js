@@ -50,15 +50,15 @@ class ContainerManager extends events_1.EventEmitter {
                     },
                     NetworkingConfig: {
                         EndpointsConfig: {
-                            "shiply_shiply-network": {},
+                            "gilgal_gilgal-network": {},
                         },
                     },
                     Env: config.envVars
                         ? Object.entries(config.envVars).map(([key, value]) => `${key}=${value}`)
                         : [],
                     Labels: {
-                        "shiply.project": "true",
-                        "shiply.container-name": config.containerName,
+                        "gilgal.project": "true",
+                        "gilgal.container-name": config.containerName,
                     },
                 };
                 // Create container
@@ -273,15 +273,15 @@ class ContainerManager extends events_1.EventEmitter {
         });
     }
     /**
-     * List all Shiply containers
+     * List all Gilgal containers
      */
-    listShiplyContainers() {
+    listGilgalContainers() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const containers = yield this.docker.listContainers({
                     all: true,
                     filters: {
-                        label: ["shiply.project=true"],
+                        label: ["gilgal.project=true"],
                     },
                 });
                 const containerInfos = [];

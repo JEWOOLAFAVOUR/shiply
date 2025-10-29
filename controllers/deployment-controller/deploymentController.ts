@@ -206,7 +206,7 @@ async function processDeployment(
       .replace(/-+/g, "-") // Replace multiple consecutive hyphens with single hyphen
       .replace(/^-|-$/g, ""); // Remove leading/trailing hyphens
 
-    const imageName = `shiply/${sanitizedProjectName}-${project.userId}`;
+    const imageName = `gilgal/${sanitizedProjectName}-${project.userId}`;
     console.log("Original project name:", project.name);
     console.log("Sanitized project name:", sanitizedProjectName);
     console.log("Final image name:", imageName);
@@ -263,7 +263,7 @@ async function processDeployment(
 
     // Configure Nginx reverse proxy for custom domain
     const subdomain = sanitizedProjectName; // Already sanitized above
-    const customUrl = `http://${subdomain}.shiply.local`;
+    const customUrl = `https://${subdomain}.gilgal.tech`;
 
     console.log(
       `🌐 Setting up reverse proxy: ${customUrl} → localhost:${hostPort}`

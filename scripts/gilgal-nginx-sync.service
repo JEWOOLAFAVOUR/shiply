@@ -1,12 +1,12 @@
 [Unit]
-Description=Shiply Nginx Auto-Sync Service
+Description=Gilgal Nginx Auto-Sync Service
 After=docker.service
 Requires=docker.service
 
 [Service]
 Type=oneshot
-ExecStart=/opt/shiply/scripts/nginx-auto-sync.sh
-WorkingDirectory=/opt/shiply
+ExecStart=/opt/gilgal/scripts/nginx-auto-sync.sh
+WorkingDirectory=/opt/gilgal
 User=azureuser
 Group=azureuser
 
